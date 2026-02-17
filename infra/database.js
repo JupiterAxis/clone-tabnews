@@ -1,6 +1,7 @@
 import { Client } from "pg";
 
 const isLocal = process.env.POSTGRES_HOST === "localhost";
+console.log(process.env.POSTGRES_HOST);
 
 async function query(queryObject) {
   const client = new Client({
