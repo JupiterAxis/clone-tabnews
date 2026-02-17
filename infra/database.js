@@ -1,5 +1,7 @@
 import { Client } from "pg";
 
+const isLocal = process.env.POSTGRES_HOST === "localhost";
+
 async function query(queryObject) {
   const client = new Client({
     host: process.env.POSTGRES_HOST,
@@ -7,13 +9,7 @@ async function query(queryObject) {
     user: process.env.POSTGRES_USER,
     database: process.env.POSTGRES_DB,
     password: process.env.POSTGRES_PASSWORD,
-  });
-  console.log("Credenciais do Postgres", {
-    host: process.env.POSTGRES_HOST,
-    port: process.env.POSTGRES_PORT,
-    user: process.env.POSTGRES_USER,
-    database: process.env.POSTGRES_DB,
-    password: process.env.POSTGRES_PASSWORD,
+    ssl: isLocal ? false : { rejectUnauthorized: false },
   });
 
   try {
@@ -29,5 +25,5 @@ async function query(queryObject) {
 }
 
 export default {
-  query,
+  query: query,
 };
