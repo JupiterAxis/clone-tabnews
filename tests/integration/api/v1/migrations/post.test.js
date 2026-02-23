@@ -1,0 +1,36 @@
+import database from "infra/database";
+
+beforeAll(cleanDatabase);
+
+async function cleanDatabase() {
+  await database.query("drop schema public cascade;");
+  await database.query("create schema public;");
+}
+
+test("POST to /api/v1/migrations should return 200", async () => {
+  const respose1 = await fetch("http://localhost:3000/api/v1/migrations", {
+    method: "POST",
+  });
+  expect(respose1.status).toBe(201);
+
+  const response1Body = await respose1.json();
+  expect(response1Body.length).toBeGreaterThanOrEqual(0);
+  expect(Array.isArray(response1Body)).toBe(true);
+
+  const numberMigrations1 = await database.query("SELECT COUNT(*)::int FROM pgmigrations ");
+  expect(numberMigrations1.rows[0].count).toBeGreaterThanOrEqual(0);
+
+  //-------------------------------------- Segundo POST -------------------------------------------------------------
+
+  const respose2 = await fetch("http://localhost:3000/api/v1/migrations", {
+    method: "POST",
+  });
+  expect(respose2.status).toBe(200);
+
+  const response2Body = await respose2.json();
+  expect(response2Body.length).toBe(0);
+  expect(Array.isArray(response2Body)).toBe(true);
+
+  const numberMigrations2 = await database.query("SELECT COUNT(*)::int FROM pgmigrations ");
+  expect(numberMigrations2.rows[0].count).toBeGreaterThanOrEqual(0);
+});
