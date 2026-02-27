@@ -4,10 +4,13 @@ import database from "infra/database.js";
 
 export default async function migrations(request, response) {
   if (request.method !== "GET" && request.method !== "POST") {
-    return response.status(405).json({});
+    return response.status(405).json({
+      error: `Method not allowed`,
+    });
   }
-  let dbClient = await database.getNewClient();
+  let dbClient;
   try {
+    dbClient = await database.getNewClient();
     const defaultMigrationOptions = {
       dbClient: dbClient,
       dryRun: true,
@@ -35,7 +38,8 @@ export default async function migrations(request, response) {
     }
   } catch (error) {
     console.error(error);
-    return response.status(500).json({});
+    //throw error;
+    return response.status(500).json({ error: "Internal error" });
   } finally {
     await dbClient.end();
   }
