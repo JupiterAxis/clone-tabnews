@@ -3,10 +3,9 @@ import { join } from "node:path";
 import database from "infra/database.js";
 
 export default async function migrations(request, response) {
-  const allowedMethods = ["GET", "POST"];
-  if (!allowedMethods.includes(request.method)) {
+  if (request.method != "GET" && request.method != "POST") {
     return response.status(405).json({
-      error: `Method ${request.method}not allowed`,
+      error: `Method ${request.method} not allowed`,
     });
   }
   let dbClient;
@@ -41,7 +40,6 @@ export default async function migrations(request, response) {
   } catch (error) {
     console.error(error);
     throw error;
-    //return response.status(500).json({ error: "Internal error" });
   } finally {
     await dbClient.end();
   }
