@@ -1,15 +1,19 @@
 import database from "infra/database";
 import { cleanDatabase } from "tests/utils/cleanDatabase.js";
+import orchestrator from "tests/orchestrator.js";
 
-beforeAll(cleanDatabase);
+beforeAll(async () => {
+  await orchestrator.waitForAllServices();
+  await cleanDatabase();
+});
 
 test("POST to /api/v1/migrations should return 200", async () => {
-  const respose1 = await fetch("http://localhost:3000/api/v1/migrations", {
+  const response1 = await fetch("http://localhost:3000/api/v1/migrations", {
     method: "POST",
   });
-  expect(respose1.status).toBe(201);
+  expect(response1.status).toBe(201);
 
-  const response1Body = await respose1.json();
+  const response1Body = await response1.json();
   expect(response1Body.length).toBeGreaterThanOrEqual(0);
   expect(Array.isArray(response1Body)).toBe(true);
 
@@ -18,12 +22,12 @@ test("POST to /api/v1/migrations should return 200", async () => {
 
   //-------------------------------------- Segundo POST -------------------------------------------------------------
 
-  const respose2 = await fetch("http://localhost:3000/api/v1/migrations", {
+  const response2 = await fetch("http://localhost:3000/api/v1/migrations", {
     method: "POST",
   });
-  expect(respose2.status).toBe(200);
+  expect(response2.status).toBe(200);
 
-  const response2Body = await respose2.json();
+  const response2Body = await response2.json();
   expect(response2Body.length).toBe(0);
   expect(Array.isArray(response2Body)).toBe(true);
 
