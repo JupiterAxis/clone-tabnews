@@ -28,10 +28,12 @@ async function getNewClient() {
   return client;
 }
 
-export default {
+const database = {
   query,
   getNewClient,
 };
+
+export default database;
 
 function getSSLValues() {
   const isLocal = process.env.POSTGRES_HOST === "localhost" || process.env.POSTGRES_HOST === "127.0.0.1";
